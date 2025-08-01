@@ -1,0 +1,16 @@
+# Core dependencies for simplified PharmaCopilot Report Generation
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+aiohttp==3.9.1
+
+# Optional: For advanced features (can be removed if not needed)
+groq==0.4.1
+chromadb==0.4.18
+sentence-transformers==2.2.2
+
+# Basic data processing
+pandas==2.1.4
+
+# System utilities
+python-multipart==0.0.6

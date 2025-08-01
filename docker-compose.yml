@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  report-generation:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: pharmacopilot-reports
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - HOST=0.0.0.0
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - ANONYMIZED_TELEMETRY=False
+      - CHROMA_TELEMETRY=False
+      - API_BASE_URL=http://165.22.211.17:8000
+      - PYTHONPATH=/app
+    volumes:
+      # Mount data directories to persist data
+      - ./knowledge_base:/app/knowledge_base
+      - ./data_collectors:/app/data_collectors
+      - app_logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - pharmacopilot-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/reports/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  app_logs:
+    driver: local
+
+networks:
+  pharmacopilot-network:
+    driver: bridge
+    name: pharmacopilot-network
